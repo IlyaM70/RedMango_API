@@ -2,7 +2,7 @@
 
 ## Overview
 
-**RedMango API** is a RESTful service built with C# and designed following the OpenAPI Specification (OAS) 3.0. This API (version 1.0) provides endpoints for user authentication, menu management, order processing, payment handling, and shopping cart functionality.
+**RedMango API** is a RESTful service for restaurant built with C# and designed following the OpenAPI Specification (OAS) 3.0. This API (version 1.0) provides endpoints for user authentication, menu management, order processing, payment handling, and shopping cart functionality.
 A live demo is available at https://redmangoapi12.azurewebsites.net/index.html.
 
 ## API Endpoints
