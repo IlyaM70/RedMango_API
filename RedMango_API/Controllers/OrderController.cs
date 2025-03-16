@@ -29,21 +29,34 @@ namespace RedMango_API.Controllers
         #region GetOrders
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<ApiResponse>> GetOrders(string? userId)
+        public async Task<ActionResult<ApiResponse>> GetOrders(string? userId,
+            string searchString, string status)
         {
             try
             {
-                var orderHeaders = _db.OrderHeaders.Include(x => x.OrderDetails)
+                IEnumerable<OrderHeader> orderHeaders = _db.OrderHeaders.Include(x => x.OrderDetails)
                     .ThenInclude(x => x.MenuItem)
                     .OrderByDescending(x => x.OrderHeaderId);
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    _response.Result = orderHeaders.Where(x => x.ApplicationUserId == userId);
+                    orderHeaders = orderHeaders.Where(x => x.ApplicationUserId == userId);
                 }
-                else
+
+                if (!searchString.IsNullOrEmpty())
                 {
-                    _response.Result = orderHeaders;
+                    orderHeaders = orderHeaders.Where(x =>
+                        x.PickUpPhoneNumber.ToLower().Contains(searchString.ToLower())
+                        || x.PickUpEmail.ToLower().Contains(searchString.ToLower())
+                        || x.PickUpName.ToLower().Contains(searchString.ToLower()));
                 }
+
+                if (!status.IsNullOrEmpty())
+                {
+                    orderHeaders = orderHeaders
+                        .Where(x => x.Status.ToLower() == status.ToLower());
+                }
+
+                _response.Result = orderHeaders;
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
