@@ -105,10 +105,9 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*"));
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
 
 app.Run();

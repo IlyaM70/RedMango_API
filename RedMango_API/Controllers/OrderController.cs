@@ -9,6 +9,7 @@ using RedMango_API.Models;
 using RedMango_API.Models.Dto;
 using RedMango_API.Utility;
 using System.Net;
+using System.Text.Json;
 
 namespace RedMango_API.Controllers
 {
@@ -30,7 +31,7 @@ namespace RedMango_API.Controllers
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<ApiResponse>> GetOrders(string? userId,
-            string searchString, string status)
+            string searchString, string status, int pageNumber=1, int pageSize=5)
         {
             try
             {
@@ -56,7 +57,16 @@ namespace RedMango_API.Controllers
                         .Where(x => x.Status.ToLower() == status.ToLower());
                 }
 
-                _response.Result = orderHeaders;
+                Pagination pagination = new Pagination()
+                {
+                    CurrentPage = pageNumber,
+                    PageSize = pageSize,
+                    TotalRecords = orderHeaders.Count()
+                };
+
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
+
+                _response.Result = orderHeaders.Skip((pageNumber-1)*pageSize).Take(pageSize);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
